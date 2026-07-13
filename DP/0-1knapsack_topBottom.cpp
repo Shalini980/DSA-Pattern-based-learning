@@ -2,24 +2,27 @@
 using namespace std;
 #include<bits/stdc++.h>
 class Solution {
-  public:
-  
-    int check(int W,vector<int>&val,vector<int>&wt,int n,vector<vector<int>> &t)
-    {
-        if(n==0 || W==0)return 0;
-        if(t[n][W]!=-1)return t[n][W];
-        if(W>=wt[n-1])
-        {
-            return t[n][W]=max(val[n-1]+check(W-wt[n-1],val,wt,n-1,t),check(W,val,wt,n-1,t));
-        }
-        else
-        {
-            return t[n][W]=check(W,val,wt,n-1,t);
-        }
-    }
+public:
     int knapsack(int W, vector<int> &val, vector<int> &wt) {
-        vector<vector<int>>t(val.size()+1,vector<int>( W+1,-1));
-        
-        return check(W,val,wt,val.size(),t);
+        int n = val.size();
+        vector<vector<int>> t(n+1, vector<int>(W+1, 0));
+
+        // Base case is already handled: t[0][w] = 0 and t[i][0] = 0
+        // since the vector is initialized to 0.
+
+        for (int i = 1; i <= n; i++) {
+            for (int w = 0; w <= W; w++) {
+                if (wt[i-1] > w) {
+                    // can't include item i-1
+                    t[i][w] = t[i-1][w];
+                } else {
+                    int include = val[i-1] + t[i-1][w - wt[i-1]];
+                    int exclude = t[i-1][w];
+                    t[i][w] = max(include, exclude);
+                }
+            }
+        }
+
+        return t[n][W];
     }
 };
