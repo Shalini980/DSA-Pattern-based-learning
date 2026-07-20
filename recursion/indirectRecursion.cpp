@@ -1,13 +1,23 @@
 #include<iostream>
 using namespace std;
-int fun(int n)
+void funA(int n)
 {
-    if(n>100)return n-10;
-    else 
-    return fun(fun(n+11));
+    if(n>0)
+    {
+        cout<<n;
+        funB(n-1);
+    }
+}
+void funB(int n)
+{
+     if(n>1)
+    {
+        cout<<n;
+        funA(n/2);
+    }
 }
 int main()
 {
-    cout<<fun(96)<<endl;
+    funA(20);
     return 0;
 }
