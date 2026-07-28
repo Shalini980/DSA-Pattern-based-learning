@@ -3,6 +3,7 @@ using namespace std;
 
 class Solution
 {
+    public:
     int check(int i,int n,vector<int>&cost,vector<int>&dp)
     {
         if(i==n)return 0;
@@ -15,8 +16,9 @@ class Solution
     int minCostClimbingStairs(vector<int>& cost)
     {
         vector<int>dp(cost.size()+1,-1);
-        check(0,cost.size(),cost,dp);
-        return dp[cost.size()];
+       int ans1= check(0,cost.size(),cost,dp);
+    int ans2=check(1,cost.size(),cost,dp);
+    return min(ans1,ans2);
     }
 };
 
