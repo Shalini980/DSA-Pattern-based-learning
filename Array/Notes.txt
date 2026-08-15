@@ -1,0 +1,110 @@
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Product Except Self → left array + right array
+
+I want you to recognize the structure underneath it.
+
+1. First, what did you REALLY discover?
+
+Suppose:
+
+[1, 2, 3, 4]
+
+For index 2, the answer is:
+
+1 × 2 × 4
+
+Notice something?
+
+The answer for an element can be split into two independent parts:
+
+elements BEFORE i × elements AFTER i
+
+So:
+
+answer[i]
+=
+(product of everything to the LEFT)
+×
+(product of everything to the RIGHT)
+
+That's the actual pattern.
+
+You used:
+
+left[i]  = product of elements before i
+right[i] = product of elements after i
+
+and then:
+
+answer[i] = left[i] * right[i]
+THAT is what you should remember.
+
+Not:
+
+"There was zero, so I used two arrays."
+
+Zero explains why division isn't safe, but zero is not the fundamental pattern.
+
+
+How do you recognize this in a completely different problem?
+
+This is the question you should ask yourself:
+
+"For the answer at index i, do I need information from everything before i and everything after i?"
+
+If YES → 🚨 Think prefix/suffix.
+
+The operation doesn't even have to be multiplication.
+
+It could be:
+
+sum
+product
+minimum
+maximum
+XOR
+count
+some other associative information
+
+For example:
+
+Problem A
+
+For every index, find the sum of all elements except itself.
+
+Immediately:
+
+answer[i] =
+sum(left of i) + sum(right of i)
+
+That's the same pattern.
+
+Problem B
+
+For every building, calculate something based on the tallest building to its left and tallest building to its right.
+
+You should think:
+
+leftMax[i]
+rightMax[i]
+
+🚨 Same underlying pattern.
+
+This is the idea behind problems such as Trapping Rain Water.
+
+Problem C
+
+Imagine:
+
+For every element, calculate the number of smaller elements on its left and the number of smaller elements on its right.
+
+Again:
+
+information from left
++
+information from right
+
+You're looking for ways to maintain prefix/suffix information.
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
