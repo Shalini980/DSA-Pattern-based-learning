@@ -107,4 +107,28 @@ information from left
 information from right
 
 You're looking for ways to maintain prefix/suffix information.
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------LC 128 — Longest Consecutive Sequence
+
+Trigger: "longest consecutive sequence" + array order doesn't matter.
+
+Think: Hash Set.
+
+Start: x-1 doesn't exist → x is a sequence start.
+
+Extend: keep checking x+1.
+
+Avoid TLE: iterate over unique values, not the original array with duplicates.
+
+Complexity: average O(n) time, O(n) space.
+
+And here's the important distinction for your overall DSA learning:
+
+Don't try to remember the exact wording of LC 128.
+
+Try to remember the question hidden underneath the wording:
+
+"I have unordered numbers. I need the longest chain of consecutive values. How can I quickly check whether neighboring values exist?"
+
+That question naturally leads you to:
+Hash Set → sequence starts → expansion.
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
