@@ -1,0 +1,20 @@
+Not:
+
+"String Compression → count consecutive characters."
+
+Instead:
+
+When the problem talks about consecutive/repeated characters, scan once and maintain the current group's count.
+
+So if an OA says:
+
+"Group identical adjacent symbols."
+
+or
+
+"Represent each run of the same character by its character and frequency."
+
+or
+
+"Replace consecutive repeated events with a compact representation."
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
