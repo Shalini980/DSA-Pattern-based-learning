@@ -1,0 +1,303 @@
+1. What is a Segment Tree?
+
+A Segment Tree is a binary tree used to answer range queries efficiently while allowing point/range updates.
+
+For an array of size n:
+
+Build → O(n)
+Range Query → O(log n)
+Point Update → O(log n)
+Range Update with Lazy Propagation → O(log n)
+Space → O(4n)
+
+Typical problems:
+
+Range Sum
+Range Minimum/Maximum
+Range GCD
+Range XOR
+Range assignment/update
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2. Basic Idea
+
+For:
+
+arr = [1, 3, 5, 7, 9, 11]
+
+A segment tree stores information about intervals.
+
+                         [0,5]
+                       /      \
+                    [0,2]     [3,5]
+                   /    \     /    \
+                [0,1]  [2]  [3,4]  [5]
+                /  \
+              [0]  [1]
+
+Each node represents a range.
+
+For sum segment tree:
+
+tree[node] = tree[left] + tree[right]
+
+For minimum:
+
+tree[node] = min(tree[left], tree[right])
+
+For maximum:
+
+tree[node] = max(tree[left], tree[right])
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+3. Important Formulae
+
+For a node i:
+
+left child  = 2*i + 1
+right child = 2*i + 2
+
+Mid:
+
+mid = low + (high - low) / 2;
+
+Children ranges:
+
+left child  → [low, mid]
+right child → [mid+1, high]
+
+Usually allocate:
+
+vector<int> seg(4*n);
+
+4*n is a safe size for a segment tree.
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+4. Building the Tree
+Base Case
+
+When:
+
+low == high
+
+we reached a single element.
+
+seg[i] = arr[low];
+Recursive Case
+build(low, mid, 2*i+1);
+build(mid+1, high, 2*i+2);
+
+Then combine:
+
+seg[i] = seg[2*i+1] + seg[2*i+2];
+Remember
+
+Leaf → store array value
+Internal node → combine children
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+5. Range Query
+
+Suppose we need:
+
+query [ql, qr]
+
+There are 3 cases.
+
+Case 1 — Completely Outside
+[low, high] ∩ [ql, qr] = ∅
+
+Return the identity value.
+
+For sum:
+
+return 0;
+
+For minimum:
+
+return INT_MAX;
+
+For maximum:
+
+return INT_MIN;
+Case 2 — Completely Inside
+[low, high] ⊆ [ql, qr]
+
+Return:
+
+seg[i]
+
+No need to go deeper.
+
+Case 3 — Partial Overlap
+
+Split:
+
+leftAnswer = query(low, mid, ...);
+rightAnswer = query(mid+1, high, ...);
+
+Combine them.
+
+For sum:
+
+return leftAnswer + rightAnswer;
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+6. Point Update
+
+Suppose:
+
+arr[index] = value
+
+Traverse the tree until:
+
+low == high
+
+Then:
+
+seg[i] = value;
+
+While returning back:
+
+seg[i] = seg[2*i+1] + seg[2*i+2];
+Key idea
+
+Update the leaf → recalculate all ancestors.
+
+Complexity:
+
+O(log n)
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+7. Why Lazy Propagation?
+
+Normal range update can become expensive.
+
+Suppose:
+
+Add +5 to every element in [2, 8]
+
+Updating every element individually could take:
+
+O(n)
+
+Lazy propagation allows us to say:
+
+"This entire segment needs +5. I don't need to update every child right now."
+
+We store the pending update in a separate array:
+
+vector<int> lazy(4*n, 0);
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+8. Lazy Propagation — THE MOST IMPORTANT PART
+
+Think of lazy[i] as:
+
+"An update is waiting to be passed to this node's children."
+
+For a range addition:
+
+lazy[i] += value;
+
+But we also need to update:
+
+seg[i]
+
+because the segment's actual sum has changed.
+
+If the segment length is:
+
+len = high - low + 1;
+
+then:
+
+seg[i] += value * len;
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+9. Push / Propagate
+
+Before going deeper into children, push the pending update.
+
+void push(int i, int low, int high)
+{
+    if(lazy[i] != 0)
+    {
+        int mid = low + (high-low)/2;
+
+        seg[2*i+1] += lazy[i] * (mid-low+1);
+        seg[2*i+2] += lazy[i] * (high-mid);
+
+        lazy[2*i+1] += lazy[i];
+        lazy[2*i+2] += lazy[i];
+
+        lazy[i] = 0;
+    }
+}
+Why?
+
+Because the parent knows:
+
+"I have received an update."
+
+But its children don't know yet.
+
+push() tells the children:
+
+"You also need this update."
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+10. Range Update
+
+For:
+
+update [ql, qr] by +value
+
+Again, think in 3 cases.
+
+Completely Outside
+
+Do nothing.
+
+Completely Inside
+
+Update the current node directly:
+
+seg[i] += value * (high-low+1);
+lazy[i] += value;
+
+Then return.
+
+This is the main magic of lazy propagation.
+
+Partial Overlap
+
+First:
+
+push(i, low, high);
+
+Then recursively update both children.
+
+Finally:
+
+seg[i] = seg[2*i+1] + seg[2*i+2];
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+11. Lazy Query
+
+For a query, if the current node has a pending lazy update, we have two options depending on implementation:
+
+Option 1
+
+Push before going to children:
+
+push(i, low, high);
+
+Then query normally.
+
+This is the easiest approach to remember.
+
+12. The Golden Template
+
+Whenever you see a Segment Tree problem, mentally ask:
+
+1. What information does each node store?
+        ↓
+2. How do I combine two children?
+        ↓
+3. What is the identity value?
+        ↓
+4. Is it point update or range update?
+        ↓
+5. If range update → Do I need lazy propagation?
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
